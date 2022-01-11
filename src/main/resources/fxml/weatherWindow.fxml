@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+
+<?import javafx.scene.control.TextField?>
+<AnchorPane prefHeight="602.0" prefWidth="834.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="379.0" layoutX="8.0" layoutY="172.0" stroke="BLACK" strokeType="INSIDE" width="399.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="379.0" layoutX="427.0" layoutY="172.0" stroke="BLACK" strokeType="INSIDE" width="399.0" />
+      <TextField fx:id="destinationTextField" layoutX="427.0" layoutY="125.0" prefHeight="44.0" prefWidth="214.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </TextField>
+      <Button fx:id="yourLocationButton" layoutX="126.0" layoutY="134.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="get your location" />
+      <Label fx:id="yourLocationLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="8.0" layoutY="89.0" prefHeight="34.0" prefWidth="399.0" text="Your Location" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="destinationLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="426.0" layoutY="89.0" prefHeight="34.0" prefWidth="399.0" text="Destination" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="destinationButton" layoutX="657.0" layoutY="134.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="change your destination" />
+      <Label alignment="CENTER" layoutX="201.0" layoutY="14.0" prefHeight="54.0" prefWidth="432.0" text="WEATHER APPLICATION">
+         <font>
+            <Font name="System Bold Italic" size="36.0" />
+         </font>
+      </Label>
+      <Label fx:id="firstDay" layoutX="17.0" layoutY="196.0" prefHeight="54.0" prefWidth="377.0" />
+      <Label fx:id="secondDay" layoutX="17.0" layoutY="263.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="thirdDay" layoutX="17.0" layoutY="334.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="fourthDay" layoutX="17.0" layoutY="402.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="fifthDay" layoutX="16.0" layoutY="466.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="firstDayDest" layoutX="437.0" layoutY="199.0" prefHeight="54.0" prefWidth="377.0" />
+      <Label fx:id="secondDayDest" layoutX="437.0" layoutY="266.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="thirdDayDest" layoutX="437.0" layoutY="337.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="fourthDayDest" layoutX="437.0" layoutY="405.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="fifthDayDest" layoutX="436.0" layoutY="469.0" prefHeight="54.0" prefWidth="378.0" />
+      <Label fx:id="errorLabel" layoutX="8.0" layoutY="559.0" prefHeight="35.0" prefWidth="819.0" />
+   </children>
+</AnchorPane>
