@@ -4,6 +4,7 @@ module WeatherApllication {
     requires javafx.graphics;
     requires javafx.fxml;
     requires json;
+    requires java.xml;
 
     opens com.karol;
     opens fxml;
