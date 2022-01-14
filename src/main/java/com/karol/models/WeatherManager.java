@@ -4,22 +4,29 @@ import com.karol.Config;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class WeatherManager{
 
-    private final String city;
+    private String city;
     private String day;
-    private Integer temperature;
+    private String temperature;
     private String cloudiness;
     private String windSpeed;
+    private String pressure;
     private String description;
     private String icon;
+    private String currenWeather;
+
 
     public WeatherManager(String city){
         this.city = city;
@@ -41,11 +48,13 @@ public class WeatherManager{
         }
 
         jsonMain = jsonObject.getJSONObject("main");
-        this.temperature = jsonMain.getInt("temp");
+        this.temperature = jsonMain.get("temp").toString()+ "oC";
+        jsonMain = jsonObject.getJSONObject("main");
+        this.pressure = jsonMain.get("pressure").toString() + "hPa";
         jsonMain = jsonObject.getJSONObject("wind");
-        this.windSpeed = jsonMain.get("speed").toString();
+        this.windSpeed = jsonMain.get("speed").toString() + "m/s";
         jsonMain = jsonObject.getJSONObject("clouds");
-        this.cloudiness = jsonMain.get("all").toString();
+        this.cloudiness = jsonMain.get("all").toString() + "%";
         jsonMain = jsonObject.getJSONArray("weather").getJSONObject(0);
         this.description = jsonMain.get("description").toString();
         this.icon = jsonMain.get("icon").toString();
@@ -53,6 +62,9 @@ public class WeatherManager{
         calendar.add(Calendar.DATE,date);
         this.day = dateFormat.format(calendar.getTime());
 
+
+        currenWeather = "TODAY: Temperature:"+ temperature + " Pressure:" + pressure + " Wind Speed:"+ windSpeed + " Clouds:" + cloudiness;
+        System.out.println(currenWeather);
     }
 
     private JSONObject readJsonUrl(String url) throws IOException {
@@ -71,35 +83,6 @@ public class WeatherManager{
         }
         return stringBuilder.toString();
     }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getDay() {
-        return day;
-    }
-
-    public Integer getTemperature() {
-        return temperature;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getWindSpeed() {
-        return windSpeed;
-    }
-
-    public String getCloudiness() {
-        return cloudiness;
-    }
-
 
 }
 
