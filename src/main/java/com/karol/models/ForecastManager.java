@@ -28,14 +28,16 @@ public class ForecastManager {
 
     public ForecastManager(String city) {
         this.city = city;
+        forecast.clear();
     }
 
     public void readXML() {
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q=Warsaw&units=metric&mode=xml&appid="+Config.API_KEY).openStream());
+            Document doc = db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&mode=xml&appid="+Config.API_KEY).openStream());
             doc.getDocumentElement().normalize();
             System.out.println("Root Element: " + doc.getDocumentElement().getNodeName());
             System.out.println("--------");
@@ -72,13 +74,13 @@ public class ForecastManager {
                             NodeList windSpeedNodeList = element.getElementsByTagName("windSpeed");
                             windSpeed = windSpeedNodeList.item(0).getAttributes().getNamedItem("mps").getTextContent() + " m/s";
                             NodeList temperatureNodeList = element.getElementsByTagName("temperature") ;
-                            temperature = temperatureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " oC";
+                            temperature = temperatureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " °C";
                             NodeList cloudinessNodeList = element.getElementsByTagName("clouds");
                             cloudiness = cloudinessNodeList.item(0).getAttributes().getNamedItem("all").getTextContent() + " %";
                             NodeList pressureNodeList = element.getElementsByTagName("pressure");
                             pressure = pressureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " hPa";
 
-                            forecast.add( weekDay.toUpperCase()+": Temperature:" + temperature + " Pressure:"+ pressure +" Wind Speed:" + windSpeed + " Clouds:" + cloudiness);
+                            forecast.add( weekDay.toUpperCase().substring(0,3)+":  " + temperature + "  "+ pressure +"  Wind:" + windSpeed + "  Clouds:" + cloudiness);
                     }
                     }
                 }
@@ -96,5 +98,21 @@ public class ForecastManager {
 
     public String getCity(){
         return city;
+    }
+
+    public String getFirstDay(){
+        return forecast.get(0);
+    }
+    public String getSecondDay(){
+        return forecast.get(1);
+    }
+    public String getThirdDay(){
+        return forecast.get(2);
+    }
+    public String getFourthDay(){
+        return forecast.get(3);
+    }
+    public String getFifthDay(){
+        return forecast.get(4);
     }
 }

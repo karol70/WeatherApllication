@@ -9,6 +9,7 @@ module WeatherApllication {
     requires json.simple;
 
     opens com.karol;
+    opens com.karol.controllers;
     opens fxml;
 
 
