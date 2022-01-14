@@ -6,18 +6,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.text.DateFormatSymbols;
+import java.util.*;
 
 public class ForecastManager {
 
@@ -27,14 +22,11 @@ public class ForecastManager {
     private static String cloudiness;
     private static String windSpeed;
     private static String pressure;
-    private String description;
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-    private static final String TIME_FORMAT = "HH:mm:ss";
-    private static final String TIME_WEATHER = "06:00:00";
     public List<String> forecast = new ArrayList<>();
 
 
-    public ForecastManager(String city) throws ParserConfigurationException {
+
+    public ForecastManager(String city) {
         this.city = city;
     }
 
@@ -43,7 +35,7 @@ public class ForecastManager {
 
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q=Warsaw&units=metric&mode=xml&appid=f41de213ca2d15bfae5942d62edebf90").openStream());
+            Document doc = db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q=Warsaw&units=metric&mode=xml&appid="+Config.API_KEY).openStream());
             doc.getDocumentElement().normalize();
             System.out.println("Root Element: " + doc.getDocumentElement().getNodeName());
             System.out.println("--------");
@@ -59,8 +51,21 @@ public class ForecastManager {
                         Element element = (Element) node;
                         date = element.getAttribute("from");
                         date = date.replace("-", "");
-                        date = date.replace("T", "");
-                        dateDay = date.substring(0, 8);
+                        Integer year = Integer.valueOf(date.substring(0,4));
+                        Integer month = Integer.valueOf(date.substring(4,6));
+                        Integer day = Integer.valueOf(date.substring(6,8));
+
+                        Locale locale = Locale.forLanguageTag("en");
+
+                        Calendar calendar = Calendar.getInstance(locale);
+                        calendar.set(year,month -1,day);
+
+                        DateFormatSymbols dfs = new DateFormatSymbols(locale);
+                        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+                        String weekDay = dfs.getWeekdays()[weekday];
+
+                       date = date.replace("T", "");
+                       dateDay = date.substring(0, 8);
 
                         if (!dateDay.equals(lastloadedDay) && date.contains("12:00:00")) {
                             lastloadedDay = dateDay;
@@ -73,7 +78,7 @@ public class ForecastManager {
                             NodeList pressureNodeList = element.getElementsByTagName("pressure");
                             pressure = pressureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " hPa";
 
-                            forecast.add( "Temperature:" + temperature + " Pressure:"+ pressure +" Windspeed:" + windSpeed + " Clouds:" + cloudiness);
+                            forecast.add( weekDay.toUpperCase()+": Temperature:" + temperature + " Pressure:"+ pressure +" Wind Speed:" + windSpeed + " Clouds:" + cloudiness);
                     }
                     }
                 }
@@ -87,5 +92,9 @@ public class ForecastManager {
         System.out.println(forecast.get(3));
         System.out.println(forecast.get(4));
 
+    }
+
+    public String getCity(){
+        return city;
     }
 }
