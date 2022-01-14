@@ -48,7 +48,7 @@ public class WeatherManager{
         }
 
         jsonMain = jsonObject.getJSONObject("main");
-        this.temperature = jsonMain.get("temp").toString()+ "oC";
+        this.temperature = jsonMain.get("temp").toString()+ "°C";
         jsonMain = jsonObject.getJSONObject("main");
         this.pressure = jsonMain.get("pressure").toString() + "hPa";
         jsonMain = jsonObject.getJSONObject("wind");
@@ -63,7 +63,7 @@ public class WeatherManager{
         this.day = dateFormat.format(calendar.getTime());
 
 
-        currenWeather = "TODAY: Temperature:"+ temperature + " Pressure:" + pressure + " Wind Speed:"+ windSpeed + " Clouds:" + cloudiness;
+        currenWeather = "TODAY:  "+ temperature + "  " + pressure + "  Wind:"+ windSpeed + "  Clouds:" + cloudiness;
         System.out.println(currenWeather);
     }
 
@@ -82,6 +82,10 @@ public class WeatherManager{
             stringBuilder.append((char) cp);
         }
         return stringBuilder.toString();
+    }
+
+    public String getCurrentWeather(){
+        return currenWeather;
     }
 
 }

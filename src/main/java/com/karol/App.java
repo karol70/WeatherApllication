@@ -29,11 +29,10 @@ public class App extends Application {
         CurrentLocation currentLocation = new CurrentLocation("");
         String city = currentLocation.getCity();
 
-        WeatherManager weatherManager = new WeatherManager("Warsaw");
-        weatherManager.getDataWeather();
+      //  WeatherManager weatherManager = new WeatherManager("Warsaw");
+      //  weatherManager.getDataWeather();
 
-        ForecastManager forecastManager = new ForecastManager(city);
-        forecastManager.readXML();
+      //  ForecastManager forecastManager = new ForecastManager(city);
 
 
 
