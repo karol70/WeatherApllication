@@ -4,27 +4,19 @@ import com.karol.models.CurrentLocation;
 import com.karol.models.ForecastManager;
 import com.karol.models.WeatherManager;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class WeatherWindowController {
 
    private CurrentLocation currentLocation;
    private ForecastManager forecastManager;
    private WeatherManager weatherManager;
-    private ForecastManager forecastManager1;
-    private WeatherManager weatherManager1;
-
-
+   private ForecastManager forecastManager1;
+   private WeatherManager weatherManager1;
 
     @FXML
     private Label destinationLabel;
@@ -212,13 +204,16 @@ public class WeatherWindowController {
     @FXML
     void destinationButtonAction() {
         String destinationCity = destinationTextField.getText();
+        String firstLetter = destinationCity.substring(0,1).toUpperCase();
+        String rest = destinationCity.substring(1);
+        String destinationCityUpper = firstLetter + rest;
 
-        forecastManager1 = new ForecastManager(destinationCity);
-        weatherManager1 = new WeatherManager(destinationCity);
+        forecastManager1 = new ForecastManager(destinationCityUpper);
+        weatherManager1 = new WeatherManager(destinationCityUpper);
         try {
             forecastManager1.getForecastData();
             weatherManager1.getDataWeather();
-            destinationLabel.setText(destinationCity);
+            destinationLabel.setText(destinationCityUpper);
 
             firstDayDestTemp.setText(weatherManager1.getTemperature());
             secondDayDestTemp.setText(forecastManager1.temper.get(1));
