@@ -21,6 +21,7 @@ public class App extends Application {
        Parent root = FXMLLoader.load(getClass().getResource("/fxml/weatherWindow.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
 
     }
