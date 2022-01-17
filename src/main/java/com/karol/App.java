@@ -1,9 +1,5 @@
 package com.karol;
 
-
-import com.karol.models.CurrentLocation;
-import com.karol.models.ForecastManager;
-import com.karol.models.WeatherManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,26 +22,6 @@ public class App extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        CurrentLocation currentLocation = new CurrentLocation("");
-        String city = currentLocation.getCity();
-
-
-/*
-        WeatherManager weatherManager = new WeatherManager("Warsaw");
-        weatherManager.getDataWeather();
-
-
-        ForecastManager forecastManager = new ForecastManager("Lublin");
-        forecastManager.getForecastData();
-        System.out.println(forecastManager.clouds.get(1));
-*/
-
-
-
-
-
-
-
 
     }
 }

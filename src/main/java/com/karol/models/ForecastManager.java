@@ -108,8 +108,4 @@ public class ForecastManager {
 
     }
 
-    public String getCity(){
-        return city;
-    }
-
 }
