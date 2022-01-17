@@ -22,18 +22,23 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException, ParserConfigurationException {
 
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/weatherWindow.fxml"));
+       Parent root = FXMLLoader.load(getClass().getResource("/fxml/weatherWindow.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
         CurrentLocation currentLocation = new CurrentLocation("");
         String city = currentLocation.getCity();
 
-      //  WeatherManager weatherManager = new WeatherManager("Warsaw");
-      //  weatherManager.getDataWeather();
 
-      //  ForecastManager forecastManager = new ForecastManager(city);
+/*
+        WeatherManager weatherManager = new WeatherManager("Warsaw");
+        weatherManager.getDataWeather();
 
+
+        ForecastManager forecastManager = new ForecastManager("Lublin");
+        forecastManager.getForecastData();
+        System.out.println(forecastManager.clouds.get(1));
+*/
 
 
 

@@ -15,7 +15,7 @@ import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class WeatherManager{
+public class WeatherManager {
 
     private String city;
     private String day;
@@ -25,10 +25,9 @@ public class WeatherManager{
     private String pressure;
     private String description;
     private String icon;
-    private String currenWeather;
 
 
-    public WeatherManager(String city){
+    public WeatherManager(String city) {
         this.city = city;
     }
 
@@ -41,14 +40,14 @@ public class WeatherManager{
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
         Calendar calendar = Calendar.getInstance();
 
-        try{
+        try {
             jsonObject = readJsonUrl("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + Config.API_KEY + "&lang=eng&units=metric");
         } catch (JSONException | IOException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
         jsonMain = jsonObject.getJSONObject("main");
-        this.temperature = jsonMain.get("temp").toString()+ "°C";
+        this.temperature = jsonMain.get("temp").toString() + "°C";
         jsonMain = jsonObject.getJSONObject("main");
         this.pressure = jsonMain.get("pressure").toString() + "hPa";
         jsonMain = jsonObject.getJSONObject("wind");
@@ -59,16 +58,14 @@ public class WeatherManager{
         this.description = jsonMain.get("description").toString();
         this.icon = jsonMain.get("icon").toString();
 
-        calendar.add(Calendar.DATE,date);
+        calendar.add(Calendar.DATE, date);
         this.day = dateFormat.format(calendar.getTime());
 
 
-        currenWeather = "TODAY:  "+ temperature + "  " + pressure + "  Wind:"+ windSpeed + "  Clouds:" + cloudiness;
-        System.out.println(currenWeather);
     }
 
     private JSONObject readJsonUrl(String url) throws IOException {
-        try(InputStream inputStream = new URL(url).openStream()){
+        try (InputStream inputStream = new URL(url).openStream()) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
             String textJson = readAll(bufferedReader);
             return new JSONObject(textJson);
@@ -78,14 +75,30 @@ public class WeatherManager{
     private String readAll(Reader reader) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         int cp;
-        while((cp = reader.read()) != -1){
+        while ((cp = reader.read()) != -1) {
             stringBuilder.append((char) cp);
         }
         return stringBuilder.toString();
     }
 
-    public String getCurrentWeather(){
-        return currenWeather;
+    public String getTemperature() {
+        return temperature;
+    }
+
+    public String getCloudiness() {
+        return cloudiness;
+    }
+
+    public String getWindSpeed() {
+        return windSpeed;
+    }
+
+    public String getPressure() {
+        return pressure;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
 }
