@@ -22,16 +22,27 @@ public class ForecastManager {
     private static String cloudiness;
     private static String windSpeed;
     private static String pressure;
-    public List<String> forecast = new ArrayList<>();
+    private static String icon;
+    public List<String> temper = new ArrayList<>();
+    public List<String> clouds = new ArrayList<>();
+    public List<String> wind = new ArrayList<>();
+    public List<String> press = new ArrayList<>();
+    public List<String> symbol = new ArrayList<>();
+    public List<String> dayOfWeek = new ArrayList<>();
 
 
 
     public ForecastManager(String city) {
         this.city = city;
-        forecast.clear();
+        temper.clear();
+        clouds.clear();
+        wind.clear();
+        press.clear();
+        symbol.clear();
+        dayOfWeek.clear();
     }
 
-    public void readXML() {
+    public void getForecastData() {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -39,8 +50,6 @@ public class ForecastManager {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&mode=xml&appid="+Config.API_KEY).openStream());
             doc.getDocumentElement().normalize();
-            System.out.println("Root Element: " + doc.getDocumentElement().getNodeName());
-            System.out.println("--------");
 
             NodeList list = doc.getElementsByTagName("time");
 
@@ -79,8 +88,16 @@ public class ForecastManager {
                             cloudiness = cloudinessNodeList.item(0).getAttributes().getNamedItem("all").getTextContent() + " %";
                             NodeList pressureNodeList = element.getElementsByTagName("pressure");
                             pressure = pressureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " hPa";
+                            NodeList symbolNodeList = element.getElementsByTagName("symbol");
+                            icon = symbolNodeList.item(0).getAttributes().getNamedItem("var").getTextContent();
 
-                            forecast.add( weekDay.toUpperCase().substring(0,3)+":  " + temperature + "  "+ pressure +"  Wind:" + windSpeed + "  Clouds:" + cloudiness);
+                            temper.add(temperature);
+                            clouds.add(cloudiness);
+                            press.add(pressure);
+                            wind.add(windSpeed);
+                            symbol.add(icon);
+                            dayOfWeek.add(weekDay);
+
                     }
                     }
                 }
@@ -88,11 +105,6 @@ public class ForecastManager {
             } catch(ParserConfigurationException | SAXException | IOException e){
                 e.printStackTrace();
             }
-        System.out.println(forecast.get(0));
-        System.out.println(forecast.get(1));
-        System.out.println(forecast.get(2));
-        System.out.println(forecast.get(3));
-        System.out.println(forecast.get(4));
 
     }
 
@@ -100,19 +112,4 @@ public class ForecastManager {
         return city;
     }
 
-    public String getFirstDay(){
-        return forecast.get(0);
-    }
-    public String getSecondDay(){
-        return forecast.get(1);
-    }
-    public String getThirdDay(){
-        return forecast.get(2);
-    }
-    public String getFourthDay(){
-        return forecast.get(3);
-    }
-    public String getFifthDay(){
-        return forecast.get(4);
-    }
 }
