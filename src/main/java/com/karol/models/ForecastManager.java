@@ -40,7 +40,7 @@ public class ForecastManager {
         return null;
     }
 
-    private String getDateInyyyymmddFormat(String date) {
+    public String getDateInyyyymmddFormat(String date) {
         String dateInRightFormat = date.replace("-", "");
         dateInRightFormat = dateInRightFormat.substring(0, 8);
 
@@ -48,7 +48,7 @@ public class ForecastManager {
 
     }
 
-    private String getWeekDayName(String date) {
+    public String getWeekDayName(String date) {
         date = date.replace("-", "");
         Integer year = Integer.valueOf(date.substring(0, 4));
         Integer month = Integer.valueOf(date.substring(4, 6));

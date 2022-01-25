@@ -20,11 +20,12 @@ public class CurrentWeatherManager {
     private String pressure;
     private String icon;
     private WeatherParameters currentWeatherParameters;
-    private List<WeatherParameters> currentWeather = new ArrayList<WeatherParameters>();
+    private final List<WeatherParameters> currentWeather = new ArrayList<>();
 
 
     public CurrentWeatherManager(String city) {
         this.city = city;
+        currentWeather.clear();
     }
 
     private JSONObject getDataFromUrl(){
@@ -42,8 +43,7 @@ public class CurrentWeatherManager {
         JSONObject jsonObject;
         JSONObject jsonMain;
 
-
-       jsonObject = getDataFromUrl();
+        jsonObject = getDataFromUrl();
 
         jsonMain = jsonObject.getJSONObject("main");
         this.temperature = jsonMain.get("temp").toString() + "°C";
