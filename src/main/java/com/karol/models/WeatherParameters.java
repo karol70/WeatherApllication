@@ -1,11 +1,11 @@
 package com.karol.models;
 
 public class WeatherParameters {
-    private String temperature;
-    private String cloudiness;
-    private String windSpeed;
-    private String pressure;
-    private String icon;
+    private final String temperature;
+    private final String cloudiness;
+    private final String windSpeed;
+    private final String pressure;
+    private final String icon;
 
     public WeatherParameters(String temperature, String cloudiness, String windSpeed, String pressure, String icon) {
         this.temperature = temperature;

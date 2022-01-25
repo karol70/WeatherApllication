@@ -14,11 +14,6 @@ import java.util.List;
 
 public class WeatherWindowController {
 
-    private ForecastManager forecastManager;
-    private CurrentWeatherManager weatherManager;
-    private ForecastManager forecastManager1;
-    private CurrentWeatherManager weatherManager1;
-
     @FXML
     private Label destinationLabel;
 
@@ -214,8 +209,8 @@ public class WeatherWindowController {
             String rest = destinationCity.substring(1);
             destinationCityUpper = firstLetter + rest;
         }
-        forecastManager1 = new ForecastManager(destinationCityUpper);
-        weatherManager1 = new CurrentWeatherManager(destinationCityUpper);
+        ForecastManager forecastManager1 = new ForecastManager(destinationCityUpper);
+        CurrentWeatherManager weatherManager1 = new CurrentWeatherManager(destinationCityUpper);
 
         try {
             forecastManager1.getForecastData();
@@ -281,8 +276,8 @@ public class WeatherWindowController {
         }
 
 
-        forecastManager = new ForecastManager(yourLocationCityUpper);
-        weatherManager = new CurrentWeatherManager(yourLocationCityUpper);
+        ForecastManager forecastManager = new ForecastManager(yourLocationCityUpper);
+        CurrentWeatherManager weatherManager = new CurrentWeatherManager(yourLocationCityUpper);
 
         try {
             forecastManager.getForecastData();

@@ -14,12 +14,6 @@ import java.util.List;
 public class CurrentWeatherManager {
 
     private final String city;
-    private String temperature;
-    private String cloudiness;
-    private String windSpeed;
-    private String pressure;
-    private String icon;
-    private WeatherParameters currentWeatherParameters;
     private final List<WeatherParameters> currentWeather = new ArrayList<>();
 
 
@@ -46,17 +40,17 @@ public class CurrentWeatherManager {
         jsonObject = getDataFromUrl();
 
         jsonMain = jsonObject.getJSONObject("main");
-        this.temperature = jsonMain.get("temp").toString() + "°C";
+        String temperature = jsonMain.get("temp").toString() + "°C";
         jsonMain = jsonObject.getJSONObject("main");
-        this.pressure = jsonMain.get("pressure").toString() + "hPa";
+        String pressure = jsonMain.get("pressure").toString() + "hPa";
         jsonMain = jsonObject.getJSONObject("wind");
-        this.windSpeed = jsonMain.get("speed").toString() + "m/s";
+        String windSpeed = jsonMain.get("speed").toString() + "m/s";
         jsonMain = jsonObject.getJSONObject("clouds");
-        this.cloudiness = jsonMain.get("all").toString() + "%";
+        String cloudiness = jsonMain.get("all").toString() + "%";
         jsonMain = jsonObject.getJSONArray("weather").getJSONObject(0);
-        this.icon = jsonMain.get("icon").toString();
-        
-        currentWeatherParameters= new WeatherParameters(temperature,cloudiness,windSpeed,pressure,icon);
+        String icon = jsonMain.get("icon").toString();
+
+        WeatherParameters currentWeatherParameters = new WeatherParameters(temperature, cloudiness, windSpeed, pressure, icon);
         currentWeather.add(currentWeatherParameters);
     }
 
