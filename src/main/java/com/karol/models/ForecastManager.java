@@ -18,7 +18,7 @@ import java.util.*;
 public class ForecastManager {
 
     private final String city;
-    private List<WeatherParameters> forecastWeather = new ArrayList<>();
+    private final List<WeatherParameters> forecastWeather = new ArrayList<>();
     public List<String> weekDayNameList = new ArrayList<>();
 
 

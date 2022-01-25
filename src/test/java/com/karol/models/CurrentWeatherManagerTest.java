@@ -10,19 +10,6 @@ import static org.hamcrest.Matchers.hasSize;
 
 class CurrentWeatherManagerTest {
 
-    @Test
-    void shouldReturnListSizeEqualToOneWhenGettingWeatherData() {
-        //given
-        CurrentWeatherManager currentWeatherManager = new CurrentWeatherManager("Lublin");
-        List<WeatherParameters> currentWeather;
-
-        //when
-        currentWeatherManager.getDataWeather();
-        currentWeather = currentWeatherManager.getCurrentWeather();
-
-        //then
-        assertThat(currentWeather, hasSize(1));
-    }
 
     @Test
     void shouldReturnListSizeEqualZeroAfterCreateObject(){
