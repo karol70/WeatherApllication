@@ -6,6 +6,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,96 +17,91 @@ import java.util.*;
 
 public class ForecastManager {
 
-    private static String city;
-    private String date;
-    private static String temperature;
-    private static String cloudiness;
-    private static String windSpeed;
-    private static String pressure;
-    private static String icon;
-    public List<String> temper = new ArrayList<>();
-    public List<String> clouds = new ArrayList<>();
-    public List<String> wind = new ArrayList<>();
-    public List<String> press = new ArrayList<>();
-    public List<String> symbol = new ArrayList<>();
-    public List<String> dayOfWeek = new ArrayList<>();
-
+    private final String city;
+    private List<WeatherParameters> forecastWeather = new ArrayList<>();
+    public List<String> weekDayNameList = new ArrayList<>();
 
 
     public ForecastManager(String city) {
         this.city = city;
-        temper.clear();
-        clouds.clear();
-        wind.clear();
-        press.clear();
-        symbol.clear();
-        dayOfWeek.clear();
+        forecastWeather.clear();
     }
 
-    public void getForecastData() {
 
+    private Document getDocumentFromUrl() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&mode=xml&appid="+Config.API_KEY).openStream());
-            doc.getDocumentElement().normalize();
+            return db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=metric&mode=xml&appid=" + Config.API_KEY).openStream());
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-            NodeList list = doc.getElementsByTagName("time");
+    private String getDateInyyyymmddFormat(String date) {
+        String dateInRightFormat = date.replace("-", "");
+        dateInRightFormat = dateInRightFormat.substring(0, 8);
 
-            String dateDay = "x";
-            String lastloadedDay = "";
+        return dateInRightFormat;
 
-                for (int temp = 0; temp < list.getLength(); temp++) {
-                    Node node = list.item(temp);
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        Element element = (Element) node;
-                        date = element.getAttribute("from");
-                        date = date.replace("-", "");
-                        Integer year = Integer.valueOf(date.substring(0,4));
-                        Integer month = Integer.valueOf(date.substring(4,6));
-                        Integer day = Integer.valueOf(date.substring(6,8));
+    }
 
-                        Locale locale = Locale.forLanguageTag("en");
+    private String getWeekDayName(String date) {
+        date = date.replace("-", "");
+        Integer year = Integer.valueOf(date.substring(0, 4));
+        Integer month = Integer.valueOf(date.substring(4, 6));
+        Integer day = Integer.valueOf(date.substring(6, 8));
+        Locale locale = Locale.forLanguageTag("en");
 
-                        Calendar calendar = Calendar.getInstance(locale);
-                        calendar.set(year,month -1,day);
+        Calendar calendar = Calendar.getInstance(locale);
+        calendar.set(year, month - 1, day);
 
-                        DateFormatSymbols dfs = new DateFormatSymbols(locale);
-                        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
-                        String weekDay = dfs.getWeekdays()[weekday];
+        DateFormatSymbols dfs = new DateFormatSymbols(locale);
+        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+        return dfs.getWeekdays()[weekday];
 
-                       date = date.replace("T", "");
-                       dateDay = date.substring(0, 8);
+    }
 
-                        if (!dateDay.equals(lastloadedDay) && date.contains("12:00:00")) {
-                            lastloadedDay = dateDay;
-                            NodeList windSpeedNodeList = element.getElementsByTagName("windSpeed");
-                            windSpeed = windSpeedNodeList.item(0).getAttributes().getNamedItem("mps").getTextContent() + " m/s";
-                            NodeList temperatureNodeList = element.getElementsByTagName("temperature") ;
-                            temperature = temperatureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " °C";
-                            NodeList cloudinessNodeList = element.getElementsByTagName("clouds");
-                            cloudiness = cloudinessNodeList.item(0).getAttributes().getNamedItem("all").getTextContent() + " %";
-                            NodeList pressureNodeList = element.getElementsByTagName("pressure");
-                            pressure = pressureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " hPa";
-                            NodeList symbolNodeList = element.getElementsByTagName("symbol");
-                            icon = symbolNodeList.item(0).getAttributes().getNamedItem("var").getTextContent();
+    public List<WeatherParameters> getForecastWeather() {
+        return forecastWeather;
+    }
 
-                            temper.add(temperature);
-                            clouds.add(cloudiness);
-                            press.add(pressure);
-                            wind.add(windSpeed);
-                            symbol.add(icon);
-                            dayOfWeek.add(weekDay);
+    public void getForecastData() {
 
-                    }
-                    }
+        NodeList list = getDocumentFromUrl().getElementsByTagName("time");
+
+        String lastloadedDay = "";
+
+        for (int temp = 0; temp < list.getLength(); temp++) {
+            Node node = list.item(temp);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) node;
+                String date = element.getAttribute("from");
+
+                String weekDayName = getWeekDayName(date);
+                String dateDayFormatyyyymmdd = getDateInyyyymmddFormat(date);
+
+                if (!dateDayFormatyyyymmdd.equals(lastloadedDay) && date.contains("12:00:00")) {
+                    lastloadedDay = dateDayFormatyyyymmdd;
+                    NodeList windSpeedNodeList = element.getElementsByTagName("windSpeed");
+                    String windSpeed = windSpeedNodeList.item(0).getAttributes().getNamedItem("mps").getTextContent() + " m/s";
+                    NodeList temperatureNodeList = element.getElementsByTagName("temperature");
+                    String temperature = temperatureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " °C";
+                    NodeList cloudinessNodeList = element.getElementsByTagName("clouds");
+                    String cloudiness = cloudinessNodeList.item(0).getAttributes().getNamedItem("all").getTextContent() + " %";
+                    NodeList pressureNodeList = element.getElementsByTagName("pressure");
+                    String pressure = pressureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " hPa";
+                    NodeList symbolNodeList = element.getElementsByTagName("symbol");
+                    String icon = symbolNodeList.item(0).getAttributes().getNamedItem("var").getTextContent();
+
+                    WeatherParameters weatherParameters = new WeatherParameters(temperature, cloudiness, windSpeed, pressure, icon);
+                    forecastWeather.add(weatherParameters);
+                    weekDayNameList.add(weekDayName);
                 }
-
-            } catch(ParserConfigurationException | SAXException | IOException e){
-                e.printStackTrace();
             }
-
+        }
     }
 
 }

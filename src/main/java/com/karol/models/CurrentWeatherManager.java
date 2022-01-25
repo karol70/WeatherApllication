@@ -6,41 +6,44 @@ import org.json.JSONException;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WeatherManager {
 
-    private String city;
-    private String day;
+public class CurrentWeatherManager {
+
+    private final String city;
     private String temperature;
     private String cloudiness;
     private String windSpeed;
     private String pressure;
-    private String description;
     private String icon;
+    private WeatherParameters currentWeatherParameters;
+    private List<WeatherParameters> currentWeather = new ArrayList<WeatherParameters>();
 
 
-    public WeatherManager(String city) {
+    public CurrentWeatherManager(String city) {
         this.city = city;
     }
 
-    public void getDataWeather() {
-        int date = 0;
-
+    private JSONObject getDataFromUrl(){
         JSONObject jsonObject = null;
-        JSONObject jsonMain;
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
-        Calendar calendar = Calendar.getInstance();
-
         try {
             jsonObject = readJsonUrl("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + Config.API_KEY + "&lang=eng&units=metric");
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
+        return jsonObject;
+    }
+
+    public void getDataWeather() {
+
+        JSONObject jsonObject;
+        JSONObject jsonMain;
+
+
+       jsonObject = getDataFromUrl();
 
         jsonMain = jsonObject.getJSONObject("main");
         this.temperature = jsonMain.get("temp").toString() + "°C";
@@ -51,18 +54,15 @@ public class WeatherManager {
         jsonMain = jsonObject.getJSONObject("clouds");
         this.cloudiness = jsonMain.get("all").toString() + "%";
         jsonMain = jsonObject.getJSONArray("weather").getJSONObject(0);
-        this.description = jsonMain.get("description").toString();
         this.icon = jsonMain.get("icon").toString();
-
-        calendar.add(Calendar.DATE, date);
-        this.day = dateFormat.format(calendar.getTime());
-
-
+        
+        currentWeatherParameters= new WeatherParameters(temperature,cloudiness,windSpeed,pressure,icon);
+        currentWeather.add(currentWeatherParameters);
     }
 
     private JSONObject readJsonUrl(String url) throws IOException {
         try (InputStream inputStream = new URL(url).openStream()) {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             String textJson = readAll(bufferedReader);
             return new JSONObject(textJson);
         }
@@ -77,26 +77,9 @@ public class WeatherManager {
         return stringBuilder.toString();
     }
 
-    public String getTemperature() {
-        return temperature;
+    public List<WeatherParameters> getCurrentWeather() {
+        return currentWeather;
     }
-
-    public String getCloudiness() {
-        return cloudiness;
-    }
-
-    public String getWindSpeed() {
-        return windSpeed;
-    }
-
-    public String getPressure() {
-        return pressure;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
 }
 
 

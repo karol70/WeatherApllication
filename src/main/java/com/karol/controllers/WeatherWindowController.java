@@ -2,19 +2,22 @@ package com.karol.controllers;
 
 
 import com.karol.models.ForecastManager;
-import com.karol.models.WeatherManager;
+import com.karol.models.CurrentWeatherManager;
+import com.karol.models.WeatherParameters;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.List;
+
 public class WeatherWindowController {
 
-   private ForecastManager forecastManager;
-   private WeatherManager weatherManager;
-   private ForecastManager forecastManager1;
-   private WeatherManager weatherManager1;
+    private ForecastManager forecastManager;
+    private CurrentWeatherManager weatherManager;
+    private ForecastManager forecastManager1;
+    private CurrentWeatherManager weatherManager1;
 
     @FXML
     private Label destinationLabel;
@@ -205,57 +208,60 @@ public class WeatherWindowController {
     @FXML
     void destinationButtonAction() {
         String destinationCity = destinationTextField.getText();
-        String firstLetter = destinationCity.substring(0,1).toUpperCase();
-        String rest = destinationCity.substring(1);
-        String destinationCityUpper = firstLetter + rest;
-
+        String destinationCityUpper = "";
+        if (!destinationCity.equals("")) {
+            String firstLetter = destinationCity.substring(0, 1).toUpperCase();
+            String rest = destinationCity.substring(1);
+            destinationCityUpper = firstLetter + rest;
+        }
         forecastManager1 = new ForecastManager(destinationCityUpper);
-        weatherManager1 = new WeatherManager(destinationCityUpper);
+        weatherManager1 = new CurrentWeatherManager(destinationCityUpper);
+
         try {
             forecastManager1.getForecastData();
             weatherManager1.getDataWeather();
             destinationLabel.setText(destinationCityUpper);
+            List<WeatherParameters> currentWeather = weatherManager1.getCurrentWeather();
+            List<WeatherParameters> forecastWeather = forecastManager1.getForecastWeather();
 
-            firstDayDestTemp.setText(weatherManager1.getTemperature());
-            secondDayDestTemp.setText(forecastManager1.temper.get(1));
-            thirdDayDestTemp.setText(forecastManager1.temper.get(2));
-            fourthDayDestTemp.setText(forecastManager1.temper.get(3));
-            fifthDayDestTemp.setText(forecastManager1.temper.get(4));
+            firstDayDestTemp.setText(currentWeather.get(0).getTemperature());
+            secondDayDestTemp.setText(forecastWeather.get(1).getTemperature());
+            thirdDayDestTemp.setText(forecastWeather.get(2).getTemperature());
+            fourthDayDestTemp.setText(forecastWeather.get(3).getTemperature());
+            fifthDayDestTemp.setText(forecastWeather.get(4).getTemperature());
 
-            firstDayDestWind.setText("Wind: " +weatherManager1.getWindSpeed());
-            secondDayDestWind.setText("Wind: " +forecastManager1.wind.get(1));
-            thirdDayDestWind.setText("Wind: " +forecastManager1.wind.get(2));
-            fourthDayDestWind.setText("Wind: " +forecastManager1.wind.get(3));
-            fifthDayDestWind.setText("Wind: " +forecastManager1.wind.get(4));
+            firstDayDestWind.setText("Wind: " + currentWeather.get(0).getWindSpeed());
+            secondDayDestWind.setText("Wind: " + forecastWeather.get(1).getWindSpeed());
+            thirdDayDestWind.setText("Wind: " + forecastWeather.get(2).getWindSpeed());
+            fourthDayDestWind.setText("Wind: " + forecastWeather.get(3).getWindSpeed());
+            fifthDayDestWind.setText("Wind: " + forecastWeather.get(4).getWindSpeed());
 
-            firstDayDestPress.setText(weatherManager1.getPressure());
-            secondDayDestPress.setText(forecastManager1.press.get(1));
-            thirdDayDestPress.setText(forecastManager1.press.get(2));
-            fourthDayDestPress.setText(forecastManager1.press.get(3));
-            fifthDayDestPress.setText(forecastManager1.press.get(4));
+            firstDayDestPress.setText(currentWeather.get(0).getPressure());
+            secondDayDestPress.setText(forecastWeather.get(1).getPressure());
+            thirdDayDestPress.setText(forecastWeather.get(2).getPressure());
+            fourthDayDestPress.setText(forecastWeather.get(3).getPressure());
+            fifthDayDestPress.setText(forecastWeather.get(4).getPressure());
 
-            secondDayDest.setText(forecastManager1.dayOfWeek.get(1));
-            thirdDayDest.setText(forecastManager1.dayOfWeek.get(2));
-            fourthDayDest.setText(forecastManager1.dayOfWeek.get(3));
-            fifthDayDest.setText(forecastManager1.dayOfWeek.get(4));
+            secondDayDest.setText(forecastManager1.weekDayNameList.get(1));
+            thirdDayDest.setText(forecastManager1.weekDayNameList.get(2));
+            fourthDayDest.setText(forecastManager1.weekDayNameList.get(3));
+            fifthDayDest.setText(forecastManager1.weekDayNameList.get(4));
 
-            firstDayDestClouds.setText("Clouds: " +weatherManager1.getCloudiness());
-            secondDayDestClouds.setText("Clouds: " +forecastManager1.clouds.get(1));
-            thirdDayDestClouds.setText("Clouds: " +forecastManager1.clouds.get(2));
-            fourthDayDestClouds.setText("Clouds: " +forecastManager1.clouds.get(3));
-            fifthDayDestClouds.setText("Clouds: " +forecastManager1.clouds.get(4));
+            firstDayDestClouds.setText("Clouds: " + currentWeather.get(0).getCloudiness());
+            secondDayDestClouds.setText("Clouds: " + forecastWeather.get(1).getCloudiness());
+            thirdDayDestClouds.setText("Clouds: " + forecastWeather.get(2).getCloudiness());
+            fourthDayDestClouds.setText("Clouds: " + forecastWeather.get(3).getCloudiness());
+            fifthDayDestClouds.setText("Clouds: " + forecastWeather.get(4).getCloudiness());
 
-            firstDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+weatherManager1.getIcon()+".png"))));
-            secondDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager1.symbol.get(1)+".png"))));
-            thirdDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager1.symbol.get(2)+".png"))));
-            fourthDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager1.symbol.get(3)+".png"))));
-            fifthDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager1.symbol.get(4)+".png"))));
-
+            firstDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + currentWeather.get(0).getIcon() + ".png"))));
+            secondDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(1).getIcon() + ".png"))));
+            thirdDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(2).getIcon() + ".png"))));
+            fourthDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(3).getIcon() + ".png"))));
+            fifthDayDestImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(4).getIcon() + ".png"))));
 
             errorLabel.setText("");
         } catch (Exception e) {
-            if(destinationCity.equals(""))
-            {
+            if (destinationCity.equals("")) {
                 errorLabel.setText("Enter city name in Text Field");
             } else {
                 errorLabel.setText("Wrong city name");
@@ -266,51 +272,68 @@ public class WeatherWindowController {
     @FXML
     void yourLocationButtonAction() {
         String yourLocationCity = yourLocationTextField.getText();
-        String firstLetter = yourLocationCity.substring(0,1).toUpperCase();
-        String rest = yourLocationCity.substring(1);
-        String yourLocationCityUpper = firstLetter + rest;
+        String yourLocationCityUpper = "";
+
+        if (!yourLocationCity.equals("")) {
+            String firstLetter = yourLocationCity.substring(0, 1).toUpperCase();
+            String rest = yourLocationCity.substring(1);
+            yourLocationCityUpper = firstLetter + rest;
+        }
+
 
         forecastManager = new ForecastManager(yourLocationCityUpper);
-        forecastManager.getForecastData();
-        weatherManager = new WeatherManager(yourLocationCityUpper);
-        weatherManager.getDataWeather();
-        yourLocationLabel.setText(yourLocationCityUpper);
+        weatherManager = new CurrentWeatherManager(yourLocationCityUpper);
 
-        firstDayTemp.setText(weatherManager.getTemperature());
-        secondDayTemp.setText(forecastManager.temper.get(1));
-        thirdDayTemp.setText(forecastManager.temper.get(2));
-        fourthDayTemp.setText(forecastManager.temper.get(3));
-        fifthDayTemp.setText(forecastManager.temper.get(4));
+        try {
+            forecastManager.getForecastData();
+            weatherManager.getDataWeather();
+            yourLocationLabel.setText(yourLocationCityUpper);
+            List<WeatherParameters> currentWeather = weatherManager.getCurrentWeather();
+            List<WeatherParameters> forecastWeather = forecastManager.getForecastWeather();
 
-        firstDayWind.setText("Wind: " +weatherManager.getWindSpeed());
-        secondDayWind.setText("Wind: " +forecastManager.wind.get(1));
-        thirdDayWind.setText("Wind: " +forecastManager.wind.get(2));
-        fourthDayWind.setText("Wind: " +forecastManager.wind.get(3));
-        fifthDayWind.setText("Wind: " +forecastManager.wind.get(4));
+            firstDayTemp.setText(currentWeather.get(0).getTemperature());
+            secondDayTemp.setText(forecastWeather.get(1).getTemperature());
+            thirdDayTemp.setText(forecastWeather.get(2).getTemperature());
+            fourthDayTemp.setText(forecastWeather.get(3).getTemperature());
+            fifthDayTemp.setText(forecastWeather.get(4).getTemperature());
 
-        firstDayPress.setText(weatherManager.getPressure());
-        secondDayPress.setText(forecastManager.press.get(1));
-        thirdDayPress.setText(forecastManager.press.get(2));
-        fourthDayPress.setText(forecastManager.press.get(3));
-        fifthDayPress.setText(forecastManager.press.get(4));
+            firstDayWind.setText("Wind: " + currentWeather.get(0).getWindSpeed());
+            secondDayWind.setText("Wind: " + forecastWeather.get(1).getWindSpeed());
+            thirdDayWind.setText("Wind: " + forecastWeather.get(2).getWindSpeed());
+            fourthDayWind.setText("Wind: " + forecastWeather.get(3).getWindSpeed());
+            fifthDayWind.setText("Wind: " + forecastWeather.get(4).getWindSpeed());
 
-        secondDay.setText(forecastManager.dayOfWeek.get(1));
-        thirdDay.setText(forecastManager.dayOfWeek.get(2));
-        fourthDay.setText(forecastManager.dayOfWeek.get(3));
-        fifthDay.setText(forecastManager.dayOfWeek.get(4));
+            firstDayPress.setText(currentWeather.get(0).getPressure());
+            secondDayPress.setText(forecastWeather.get(1).getPressure());
+            thirdDayPress.setText(forecastWeather.get(2).getPressure());
+            fourthDayPress.setText(forecastWeather.get(3).getPressure());
+            fifthDayPress.setText(forecastWeather.get(4).getPressure());
 
-        firstDayClouds.setText("Clouds: " +weatherManager.getCloudiness());
-        secondDayClouds.setText("Clouds: " +forecastManager.clouds.get(1));
-        thirdDayClouds.setText("Clouds: " +forecastManager.clouds.get(2));
-        fourthDayClouds.setText("Clouds: " +forecastManager.clouds.get(3));
-        fifthDayClouds.setText("Clouds: " +forecastManager.clouds.get(4));
+            secondDay.setText(forecastManager.weekDayNameList.get(1));
+            thirdDay.setText(forecastManager.weekDayNameList.get(2));
+            fourthDay.setText(forecastManager.weekDayNameList.get(3));
+            fifthDay.setText(forecastManager.weekDayNameList.get(4));
 
-        firstDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+weatherManager.getIcon()+".png"))));
-        secondDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager.symbol.get(1)+".png"))));
-        thirdDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager.symbol.get(2)+".png"))));
-        fourthDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager.symbol.get(3)+".png"))));
-        fifthDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/"+forecastManager.symbol.get(4)+".png"))));
+            firstDayClouds.setText("Clouds: " + currentWeather.get(0).getCloudiness());
+            secondDayClouds.setText("Clouds: " + forecastWeather.get(1).getCloudiness());
+            thirdDayClouds.setText("Clouds: " + forecastWeather.get(2).getCloudiness());
+            fourthDayClouds.setText("Clouds: " + forecastWeather.get(3).getCloudiness());
+            fifthDayClouds.setText("Clouds: " + forecastWeather.get(3).getCloudiness());
 
+            firstDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + currentWeather.get(0).getIcon() + ".png"))));
+            secondDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(1).getIcon() + ".png"))));
+            thirdDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(2).getIcon() + ".png"))));
+            fourthDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(3).getIcon() + ".png"))));
+            fifthDayImg.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(4).getIcon() + ".png"))));
+
+            errorLabel.setText("");
+        } catch (Exception e) {
+            if (yourLocationCity.equals("")) {
+                errorLabel.setText("Enter city name in Text Field");
+            } else {
+                errorLabel.setText("Wrong city name");
+            }
+        }
     }
 
 }
