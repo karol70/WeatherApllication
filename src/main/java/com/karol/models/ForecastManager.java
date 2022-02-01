@@ -1,6 +1,11 @@
 package com.karol.models;
 
 import com.karol.Config;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -10,98 +15,61 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.text.DateFormatSymbols;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 
 public class ForecastManager {
 
     private final String city;
-    private final List<WeatherParameters> forecastWeather = new ArrayList<>();
-    public List<String> weekDayNameList = new ArrayList<>();
-
+    private final List<ForecastWeatherParameters> forecastWeather = new ArrayList<>();
+    JsonDataManager jsonDataManager = new JsonDataManager();
+    DateManager dateManager = new DateManager();
 
     public ForecastManager(String city) {
         this.city = city;
         forecastWeather.clear();
     }
 
+    public List<ForecastWeatherParameters> getForecastData() throws IOException {
 
-    private Document getDocumentFromUrl() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            return db.parse(new URL("http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=metric&mode=xml&appid=" + Config.API_KEY).openStream());
-        } catch (IOException | SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String getDateInyyyymmddFormat(String date) {
-        String dateInRightFormat = date.replace("-", "");
-        dateInRightFormat = dateInRightFormat.substring(0, 8);
-
-        return dateInRightFormat;
-
-    }
-
-    public String getWeekDayName(String date) {
-        date = date.replace("-", "");
-        Integer year = Integer.valueOf(date.substring(0, 4));
-        Integer month = Integer.valueOf(date.substring(4, 6));
-        Integer day = Integer.valueOf(date.substring(6, 8));
-        Locale locale = Locale.forLanguageTag("en");
-
-        Calendar calendar = Calendar.getInstance(locale);
-        calendar.set(year, month - 1, day);
-
-        DateFormatSymbols dfs = new DateFormatSymbols(locale);
-        int weekday = calendar.get(Calendar.DAY_OF_WEEK);
-        return dfs.getWeekdays()[weekday];
-
-    }
-
-    public List<WeatherParameters> getForecastWeather() {
-        return forecastWeather;
-    }
-
-    public void getForecastData() {
-
-        NodeList list = getDocumentFromUrl().getElementsByTagName("time");
-
+        JSONObject object;
+        JSONArray getArray;
+        JSONObject jsonMain;
         String lastloadedDay = "";
 
-        for (int temp = 0; temp < list.getLength(); temp++) {
-            Node node = list.item(temp);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element) node;
-                String date = element.getAttribute("from");
+        object = jsonDataManager.getDataFromUrl("http://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&appid="+Config.API_KEY);
+        getArray = object.getJSONArray("list");
 
-                String weekDayName = getWeekDayName(date);
-                String dateDayFormatyyyymmdd = getDateInyyyymmddFormat(date);
+        for (int i = 0; i < getArray.length(); i++) {
 
-                if (!dateDayFormatyyyymmdd.equals(lastloadedDay) && date.contains("12:00:00")) {
-                    lastloadedDay = dateDayFormatyyyymmdd;
-                    NodeList windSpeedNodeList = element.getElementsByTagName("windSpeed");
-                    String windSpeed = windSpeedNodeList.item(0).getAttributes().getNamedItem("mps").getTextContent() + " m/s";
-                    NodeList temperatureNodeList = element.getElementsByTagName("temperature");
-                    String temperature = temperatureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " °C";
-                    NodeList cloudinessNodeList = element.getElementsByTagName("clouds");
-                    String cloudiness = cloudinessNodeList.item(0).getAttributes().getNamedItem("all").getTextContent() + " %";
-                    NodeList pressureNodeList = element.getElementsByTagName("pressure");
-                    String pressure = pressureNodeList.item(0).getAttributes().getNamedItem("value").getTextContent() + " hPa";
-                    NodeList symbolNodeList = element.getElementsByTagName("symbol");
-                    String icon = symbolNodeList.item(0).getAttributes().getNamedItem("var").getTextContent();
+            JSONObject objects = getArray.getJSONObject(i);
 
-                    WeatherParameters weatherParameters = new WeatherParameters(temperature, cloudiness, windSpeed, pressure, icon);
-                    forecastWeather.add(weatherParameters);
-                    weekDayNameList.add(weekDayName);
-                }
+            String date = objects.get("dt_txt").toString();
+
+            String weekDayName = dateManager.getWeekDayName(date);
+            String dateDayFormatyyyymmdd = dateManager.getDateInyyyymmddFormat(date);
+
+            if (!dateDayFormatyyyymmdd.equals(lastloadedDay) && date.contains("12:00:00")) {
+                lastloadedDay = dateDayFormatyyyymmdd;
+                jsonMain = objects.getJSONObject("main");
+                String temperature = jsonMain.get("temp").toString() + "°C";
+                String pressure = jsonMain.get("pressure").toString() + "hPa";
+                jsonMain = objects.getJSONObject("wind");
+                String windSpeed = jsonMain.get("speed").toString() + "m/s";
+                jsonMain = objects.getJSONObject("clouds");
+                String cloudiness = jsonMain.get("all").toString() + "%";
+                jsonMain = objects.getJSONArray("weather").getJSONObject(0);
+                String icon = jsonMain.get("icon").toString();
+
+                WeatherParameters weatherParameters = new WeatherParameters(temperature, cloudiness, windSpeed, pressure, icon);
+                ForecastWeatherParameters forecastWeatherParameters = new ForecastWeatherParameters(weatherParameters, weekDayName);
+                forecastWeather.add(forecastWeatherParameters);
             }
         }
+        return forecastWeather;
     }
-
 }

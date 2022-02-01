@@ -3,13 +3,16 @@ package com.karol.controllers;
 
 import com.karol.models.ForecastManager;
 import com.karol.models.CurrentWeatherManager;
+import com.karol.models.ForecastWeatherParameters;
 import com.karol.models.WeatherParameters;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.List;
 
 public class WeatherWindowController {
@@ -209,30 +212,34 @@ public class WeatherWindowController {
         CurrentWeatherManager weatherManager = new CurrentWeatherManager(destinationCityUpper);
 
         try {
-            forecastManager.getForecastData();
-            weatherManager.getDataWeather();
             destinationLabel.setText(destinationCityUpper);
-            List<WeatherParameters> currentWeather = weatherManager.getCurrentWeather();
-            List<WeatherParameters> forecastWeather = forecastManager.getForecastWeather();
+            List<WeatherParameters> currentWeather = weatherManager.getDataWeather();
+            List<ForecastWeatherParameters> forecastWeather = forecastManager.getForecastData();
 
-            getTemp(currentWeather,forecastWeather,firstDayDestTemp,secondDayDestTemp, thirdDayDestTemp, fourthDayDestTemp,  fifthDayDestTemp);
-            getWindSpeed(currentWeather,forecastWeather,firstDayDestWind,secondDayDestWind, thirdDayDestWind, fourthDayDestWind,  fifthDayDestWind);
-            getPressure(currentWeather,forecastWeather,firstDayDestPress,secondDayDestPress, thirdDayDestPress, fourthDayDestPress,  fifthDayDestPress);
-            getDay(forecastManager, secondDayDest,  thirdDayDest,  fourthDayDest,  fifthDayDest );
-            getCloudiness(currentWeather,forecastWeather,firstDayDestClouds,secondDayDestClouds, thirdDayDestClouds, fourthDayDestClouds,  fifthDayDestClouds);
+            getTemp(currentWeather, forecastWeather, firstDayDestTemp, secondDayDestTemp, thirdDayDestTemp, fourthDayDestTemp, fifthDayDestTemp);
+            getWindSpeed(currentWeather, forecastWeather, firstDayDestWind, secondDayDestWind, thirdDayDestWind, fourthDayDestWind, fifthDayDestWind);
+            getPressure(currentWeather, forecastWeather, firstDayDestPress, secondDayDestPress, thirdDayDestPress, fourthDayDestPress, fifthDayDestPress);
+            getDay(forecastWeather, secondDayDest, thirdDayDest, fourthDayDest, fifthDayDest);
+            getCloudiness(currentWeather, forecastWeather, firstDayDestClouds, secondDayDestClouds, thirdDayDestClouds, fourthDayDestClouds, fifthDayDestClouds);
             getImage(firstDayDestImg, currentWeather, secondDayDestImg, forecastWeather, thirdDayDestImg, fourthDayDestImg, fifthDayDestImg);
 
             errorLabel.setText("");
-        } catch (Exception e) {
+        } catch (JSONException e){
             if (destinationCity.equals("")) {
                 errorLabel.setText("Enter city name in Text Field");
             } else {
                 errorLabel.setText("Wrong city name");
             }
+        } catch (IOException e){
+            errorLabel.setText("Please enter city name in text field");
+        } catch (NullPointerException e) {
+            errorLabel.setText("Something goes wrong, please try later");
         }
+
+
     }
 
-    private void getCloudiness(List<WeatherParameters> currentWeather, List<WeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
+    private void getCloudiness(List<WeatherParameters> currentWeather, List<ForecastWeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
         label1.setText("Clouds: " + currentWeather.get(0).getCloudiness());
         label2.setText("Clouds: " + forecastWeather.get(1).getCloudiness());
         label3.setText("Clouds: " + forecastWeather.get(2).getCloudiness());
@@ -240,14 +247,14 @@ public class WeatherWindowController {
         label5.setText("Clouds: " + forecastWeather.get(4).getCloudiness());
     }
 
-    private void getDay(ForecastManager forecastManager, Label label2, Label label3, Label label4, Label label5){
-        label2.setText(forecastManager.weekDayNameList.get(1));
-        label3.setText(forecastManager.weekDayNameList.get(2));
-        label4.setText(forecastManager.weekDayNameList.get(3));
-        label5.setText(forecastManager.weekDayNameList.get(4));
+    private void getDay(List<ForecastWeatherParameters> forecastWeather, Label label2, Label label3, Label label4, Label label5){
+        label2.setText(forecastWeather.get(1).getDay());
+        label3.setText(forecastWeather.get(2).getDay());
+        label4.setText(forecastWeather.get(3).getDay());
+        label5.setText(forecastWeather.get(4).getDay());
     }
 
-    private void getPressure(List<WeatherParameters> currentWeather, List<WeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
+    private void getPressure(List<WeatherParameters> currentWeather, List<ForecastWeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
         label1.setText(currentWeather.get(0).getPressure());
         label2.setText(forecastWeather.get(1).getPressure());
         label3.setText(forecastWeather.get(2).getPressure());
@@ -255,7 +262,7 @@ public class WeatherWindowController {
         label5.setText(forecastWeather.get(4).getPressure());
     }
 
-    private void getWindSpeed(List<WeatherParameters> currentWeather, List<WeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
+    private void getWindSpeed(List<WeatherParameters> currentWeather, List<ForecastWeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
         label1.setText("Wind: " + currentWeather.get(0).getWindSpeed());
         label2.setText("Wind: " + forecastWeather.get(1).getWindSpeed());
         label3.setText("Wind: " + forecastWeather.get(2).getWindSpeed());
@@ -264,7 +271,7 @@ public class WeatherWindowController {
     }
 
 
-    private void getTemp(List<WeatherParameters> currentWeather, List<WeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
+    private void getTemp(List<WeatherParameters> currentWeather, List<ForecastWeatherParameters> forecastWeather, Label label1, Label label2, Label label3, Label label4, Label label5){
         label1.setText(currentWeather.get(0).getTemperature());
         label2.setText(forecastWeather.get(1).getTemperature());
         label3.setText(forecastWeather.get(2).getTemperature());
@@ -272,7 +279,7 @@ public class WeatherWindowController {
         label5.setText(forecastWeather.get(4).getTemperature());
     }
 
-    private void getImage(ImageView img1, List<WeatherParameters> currentWeather, ImageView img2, List<WeatherParameters> forecastWeather, ImageView img3, ImageView img4, ImageView img5) {
+    private void getImage(ImageView img1, List<WeatherParameters> currentWeather, ImageView img2, List<ForecastWeatherParameters> forecastWeather, ImageView img3, ImageView img4, ImageView img5) {
         img1.setImage(new Image(String.valueOf(getClass().getResource("/img/" + currentWeather.get(0).getIcon() + ".png"))));
         img2.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(1).getIcon() + ".png"))));
         img3.setImage(new Image(String.valueOf(getClass().getResource("/img/" + forecastWeather.get(2).getIcon() + ".png"))));
@@ -299,16 +306,14 @@ public class WeatherWindowController {
         CurrentWeatherManager weatherManager = new CurrentWeatherManager(yourLocationCityUpper);
 
         try {
-            forecastManager.getForecastData();
-            weatherManager.getDataWeather();
             yourLocationLabel.setText(yourLocationCityUpper);
-            List<WeatherParameters> currentWeather = weatherManager.getCurrentWeather();
-            List<WeatherParameters> forecastWeather = forecastManager.getForecastWeather();
+            List<WeatherParameters> currentWeather = weatherManager.getDataWeather();
+            List<ForecastWeatherParameters> forecastWeather = forecastManager.getForecastData();
 
             getTemp(currentWeather,forecastWeather,firstDayTemp,secondDayTemp, thirdDayTemp, fourthDayTemp,  fifthDayTemp);
             getWindSpeed(currentWeather,forecastWeather,firstDayWind,secondDayWind, thirdDayWind, fourthDayWind,  fifthDayWind);
             getPressure(currentWeather,forecastWeather,firstDayPress,secondDayPress, thirdDayPress, fourthDayPress,  fifthDayPress);
-            getDay(forecastManager, secondDay,  thirdDay,  fourthDay,  fifthDay);
+            getDay(forecastWeather, secondDay,  thirdDay,  fourthDay,  fifthDay);
             getCloudiness(currentWeather,forecastWeather,firstDayClouds,secondDayClouds, thirdDayClouds, fourthDayClouds,  fifthDayClouds);
             getImage(firstDayImg, currentWeather, secondDayImg, forecastWeather, thirdDayImg, fourthDayImg, fifthDayImg);
 

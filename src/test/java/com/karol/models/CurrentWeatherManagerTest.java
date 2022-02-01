@@ -14,21 +14,8 @@ import static org.mockito.BDDMockito.given;
 
 class CurrentWeatherManagerTest {
 
-    @Spy
-    private CurrentWeatherManager currentWeatherManagerSpy;
 
-    @Test
-    void shouldReturnListSizeEqualZeroAfterCreateObject(){
-        //given
-        CurrentWeatherManager currentWeatherManager = new CurrentWeatherManager("Lublin");
-        List<WeatherParameters> currentWeather;
 
-        //when
-        currentWeather = currentWeatherManager.getCurrentWeather();
-
-        //then
-        assertThat(currentWeather, hasSize(0));
-    }
 
 
 }
