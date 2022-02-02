@@ -1,12 +1,10 @@
 package com.karol.models;
 
 import com.karol.Config;
-import org.json.JSONObject;
-import org.json.JSONException;
 
+
+import org.json.JSONObject;
 import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,18 +12,25 @@ import java.util.List;
 public class CurrentWeatherManager {
 
     private final String city;
-    JsonDataManager jsonDataManager = new JsonDataManager();
+    private JsonDataManager jsonDataManager = new JsonDataManager();
+    private JSONObject jsonObject;
 
-    public CurrentWeatherManager(String city) {
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    public CurrentWeatherManager(String city) throws IOException {
         this.city = city;
+        jsonObject = jsonDataManager.getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + Config.API_KEY + "&lang=eng&units=metric");
     }
 
     public List<WeatherParameters> getDataWeather() throws IOException {
 
-        JSONObject jsonObject;
         JSONObject jsonMain;
-
-        jsonObject = jsonDataManager.getDataFromUrl("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + Config.API_KEY + "&lang=eng&units=metric");
 
         jsonMain = jsonObject.getJSONObject("main");
         String temperature = jsonMain.get("temp").toString() + "°C";

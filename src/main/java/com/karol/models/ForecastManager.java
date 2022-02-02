@@ -2,24 +2,8 @@ package com.karol.models;
 
 import com.karol.Config;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.*;
 
 public class ForecastManager {
@@ -28,21 +12,31 @@ public class ForecastManager {
     private final List<ForecastWeatherParameters> forecastWeather = new ArrayList<>();
     JsonDataManager jsonDataManager = new JsonDataManager();
     DateManager dateManager = new DateManager();
+    private JSONObject jsonObject;
 
-    public ForecastManager(String city) {
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject object) {
+        this.jsonObject = object;
+    }
+
+
+
+    public ForecastManager(String city) throws IOException {
         this.city = city;
-        forecastWeather.clear();
+        jsonObject = jsonDataManager.getDataFromUrl("http://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&appid="+Config.API_KEY);
     }
 
     public List<ForecastWeatherParameters> getForecastData() throws IOException {
 
-        JSONObject object;
         JSONArray getArray;
         JSONObject jsonMain;
         String lastloadedDay = "";
 
-        object = jsonDataManager.getDataFromUrl("http://api.openweathermap.org/data/2.5/forecast?q="+city+"&units=metric&appid="+Config.API_KEY);
-        getArray = object.getJSONArray("list");
+
+        getArray = jsonObject.getJSONArray("list");
 
         for (int i = 0; i < getArray.length(); i++) {
 

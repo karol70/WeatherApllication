@@ -1,10 +1,7 @@
 package com.karol.controllers;
 
 
-import com.karol.models.ForecastManager;
-import com.karol.models.CurrentWeatherManager;
-import com.karol.models.ForecastWeatherParameters;
-import com.karol.models.WeatherParameters;
+import com.karol.models.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -13,6 +10,7 @@ import javafx.scene.image.ImageView;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 public class WeatherWindowController {
@@ -204,7 +202,7 @@ public class WeatherWindowController {
     private TextField yourLocationTextField;
 
     @FXML
-    void destinationButtonAction() {
+    void destinationButtonAction() throws IOException {
         String destinationCity = destinationTextField.getText();
         String destinationCityUpper = getCityUpper(destinationCity);
 
@@ -224,18 +222,12 @@ public class WeatherWindowController {
             getImage(firstDayDestImg, currentWeather, secondDayDestImg, forecastWeather, thirdDayDestImg, fourthDayDestImg, fifthDayDestImg);
 
             errorLabel.setText("");
-        } catch (JSONException e){
-            if (destinationCity.equals("")) {
-                errorLabel.setText("Enter city name in Text Field");
-            } else {
-                errorLabel.setText("Wrong city name");
-            }
-        } catch (IOException e){
-            errorLabel.setText("Please enter city name in text field");
-        } catch (NullPointerException e) {
-            errorLabel.setText("Something goes wrong, please try later");
+        } catch (IllegalArgumentException | JSONException | IOException | NullPointerException e){
+                if (destinationCity.equals("")){
+                    errorLabel.setText("Enter city name in text field");
+            } else
+                errorLabel.setText("Wrong city name or broken connection, please try again");
         }
-
 
     }
 
@@ -298,10 +290,10 @@ public class WeatherWindowController {
     }
 
     @FXML
-    void yourLocationButtonAction() {
+    void yourLocationButtonAction() throws IOException {
         String yourLocationCity = yourLocationTextField.getText();
         String yourLocationCityUpper = getCityUpper(yourLocationCity);
-        
+
         ForecastManager forecastManager = new ForecastManager(yourLocationCityUpper);
         CurrentWeatherManager weatherManager = new CurrentWeatherManager(yourLocationCityUpper);
 
@@ -318,13 +310,11 @@ public class WeatherWindowController {
             getImage(firstDayImg, currentWeather, secondDayImg, forecastWeather, thirdDayImg, fourthDayImg, fifthDayImg);
 
             errorLabel.setText("");
-        } catch (Exception e) {
-            if (yourLocationCity.equals("")) {
-                errorLabel.setText("Enter city name in Text Field");
-            } else {
-                errorLabel.setText("Wrong city name");
-            }
+        } catch (IllegalArgumentException | JSONException | IOException | NullPointerException e){
+            if (yourLocationCity.equals("")){
+                errorLabel.setText("Enter city name in text field");
+            } else
+                errorLabel.setText("Wrong city name or broken connection, please try again");
         }
     }
-
 }
